@@ -1,0 +1,28 @@
+%USERPROFILE%
+%HOMEPATH%
+%HOMEDRIVE%
+%APPDATA%
+%LOCALAPPDATA%
+%PROGRAMDATA%
+%TEMP%
+%TMP%
+%PUBLIC%
+
+C:\Users
+C:\Windows
+C:\Program Files
+C:\Program Files (x86)
+C:\ProgramData
+
+\Users\
+\AppData\
+\Desktop
+\Documents
+\Downloads
+\Pictures
+\Videos
+\Music
+
+~\
+~/Documents
+~/Desktop
