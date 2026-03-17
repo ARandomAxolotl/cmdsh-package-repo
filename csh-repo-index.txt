@@ -1,0 +1,2 @@
+type : meta-repo
+repo-1 : @/packages/
