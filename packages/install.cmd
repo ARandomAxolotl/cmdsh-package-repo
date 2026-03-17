@@ -1,6 +1,6 @@
 @echo off
 set "install_path=%1"
-if "%1==" (
+if "%1" == "" (
 	set "install_path=%CD%"
 	echo Installing to this dir.
 	)
@@ -15,3 +15,7 @@ cd Functions
 echo Downloading base packages...
 curl -sL https://raw.githubusercontent.com/ARandomAxolotl/cmdsh-package-repo/refs/heads/main/packages/func.cmd --output func.cmd
 curl -sL https://raw.githubusercontent.com/ARandomAxolotl/cmdsh-package-repo/refs/heads/main/packages/scmdc.cmd --output scmdc.cmd
+(
+	echo [WARNING] : If you have problem with the .cmd files, make sure to open it in notepad++, change the EOL from LF to CRLF.
+	echo Git just too "helpful" to convert them from CRLF to LF
+) > READMEFIRST.txt
