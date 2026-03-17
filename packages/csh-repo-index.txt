@@ -39,3 +39,7 @@ package-10 : touch
 description : touch
 dependencies : none
 version : 1
+package-11 : install
+description : install
+dependencies : none
+version : 1
