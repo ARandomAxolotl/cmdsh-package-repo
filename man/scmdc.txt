@@ -8,7 +8,7 @@ OPTIONS
     -s    Silent mode; suppresses output.
     -d    Debug mode; shows line-by-line processing.
     -v    Verbose mode; turns on echo.
-    -b    Battery/Bat mode; processes .sbat into .bat files.
+    -b    Bat mode; processes .sbat into .bat files.
 
 DESCRIPTION
     Compiles .scmd files into .cmd. It checks for "suspect" commands 

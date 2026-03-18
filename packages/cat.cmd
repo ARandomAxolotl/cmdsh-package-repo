@@ -4,5 +4,6 @@ if "%~1"=="" (
     findstr "^"
 ) else (
     type "%~1"
+	echo.
 )
 exit /b %errorlevel%

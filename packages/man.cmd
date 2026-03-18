@@ -12,7 +12,7 @@ set "baseDir=%~dp0.."
 set "configDir=!baseDir!\.config"
 set "configPath=!configDir!\manpath"
 set "saveDir=!configDir!\saved_man"
-set "manDir=%~dp0man_pages\"
+set "manDir=%~dp0..\.config\man_pages\"
 
 :: --- Initialization ---
 if not exist "!configDir!" mkdir "!configDir!"
