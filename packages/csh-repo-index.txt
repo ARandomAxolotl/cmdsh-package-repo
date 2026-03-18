@@ -43,3 +43,7 @@ package-11 : install
 description : install
 dependencies : none
 version : 1
+package-12 : man
+description : manual
+dependencies : none
+version : 1

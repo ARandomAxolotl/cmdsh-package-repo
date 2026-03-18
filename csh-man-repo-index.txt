@@ -1,0 +1,2 @@
+type : man-meta-repo
+repo-1 : @man/
