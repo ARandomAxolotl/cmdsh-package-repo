@@ -2,7 +2,12 @@
 setlocal enabledelayedexpansion
 
 :: --- Configuration & Paths ---
-set "ESC= "
+:: This creates a real Escape character (ASCII 27)
+for /f "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do rem"') do set "ESC=%%b"
+
+:: Enable Virtual Terminal Processing for colors in modern Windows 10/11
+reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1 /f >nul 2>&1
+
 set "baseDir=%~dp0.."
 set "configDir=!baseDir!\.config_man"
 set "configPath=!configDir!\manpath"
@@ -53,7 +58,8 @@ goto :end
 setlocal enabledelayedexpansion
 set "url=%~1"
 if not "!url:~-1!"=="/" set "url=!url!/"
-set "sName=!url:https://=!" & set "sName=!sName:/=_!" & set "sName=!sName::=!"
+set "sName=!url:https://=!"
+set "sName=!sName:/=_!" & set "sName=!sName::=!"
 
 echo %ESC%[33mFetching: !url!csh-man-repo-index.txt%ESC%[0m
 set "tempFile=!saveDir!\temp_!RANDOM!.txt"
@@ -107,7 +113,7 @@ for %%F in ("!saveDir!\*.txt") do (
                 if not errorlevel 1 (
                     echo %ESC%[32m[Success] Manual installed. Displaying content:%ESC%[0m
                     echo %ESC%[90m--------------------------------------------------%ESC%[0m
-                    type "!manDir!!target!.txt"
+                    cat "!manDir!!target!.txt"
                     echo.
                     echo %ESC%[90m--------------------------------------------------%ESC%[0m
                 ) else (
@@ -123,7 +129,7 @@ goto :end
 :view_man
 if exist "!manDir!!cmd!.txt" (
     echo %ESC%[33m--- Manual Page: !cmd! ---%ESC%[0m
-    type "!manDir!!cmd!.txt"
+    cat "!manDir!!cmd!.txt"
 ) else (
     echo %ESC%[31m[Error] No manual entry for "!cmd!".%ESC%[0m
     echo %ESC%[90mTip: Try 'man install !cmd!' to download it.%ESC%[0m
