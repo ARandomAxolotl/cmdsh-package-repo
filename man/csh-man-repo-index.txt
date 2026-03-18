@@ -25,3 +25,7 @@ package-12 : woman
 version : 1
 package-13 : man
 version : 1
+package-14 : view
+version : 1
+package-15 : help
+version : 1

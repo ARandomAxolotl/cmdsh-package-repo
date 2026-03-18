@@ -1,0 +1,15 @@
+{yellow}NAME{reset}
+    {cyan}view{reset} - A stylized pager for text files.
+
+{yellow}SYNOPSIS{reset}
+    {cyan}view{reset} {green}<filename>{reset}
+
+{yellow}DESCRIPTION{reset}
+    A wrapper for {cyan}cat{reset} that automatically enables line 
+    numbering and pipes output through {cyan}more{reset} for easy 
+    reading of long files.
+
+    Inherits all {magenta}color tag{reset} parsing from the {cyan}cat{reset} engine.
+
+{yellow}DEPENDENCIES{reset}
+    {cyan}cat{reset} v2 or higher.
