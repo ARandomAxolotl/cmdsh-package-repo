@@ -1,6 +1,13 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
 
+:: installer
+if "%~1" == "--installer" (
+	cd /d "%~dp0..\.config"
+	curl -sL https://raw.githubusercontent.com/ARandomAxolotl/cmdsh-package-repo/main/suscmd.txt --output suscmd.txt
+	curl -sL https://raw.githubusercontent.com/ARandomAxolotl/cmdsh-package-repo/main/suspath.txt --output suspath.txt
+	goto :eof
+)
 :: --- Initialize Flags ---
 set "SILENT=0"
 set "DEBUG=0"
