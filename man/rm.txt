@@ -1,13 +1,13 @@
-NAME
-    rm - Remove files or directories.
+{yellow}NAME{reset}
+    {cyan}rm{reset} - Remove files or directories.
 
-SYNOPSIS
-    rm [-rf] [--no-preserve-root] <target>
+{yellow}SYNOPSIS{reset}
+    {cyan}rm{reset} [{magenta}-rf{reset}] [{magenta}--no-preserve-root{reset}] {green}<target>{reset}
 
-OPTIONS
-    -rf                 Force deletion of files or recursive deletion of folders.
-    --no-preserve-root  Allows operations on 'C:\' (Dangerous).
+{yellow}OPTIONS{reset}
+    {magenta}-rf{reset}                 Force deletion of files or recursive deletion of folders.
+    {magenta}--no-preserve-root{reset}  Allows operations on 'C:\' ({red}Dangerous{reset}).
 
-DESCRIPTION
-    Deletes the specified target. Without -rf, it uses standard 
-    del or rd commands.
+{yellow}DESCRIPTION{reset}
+    Deletes the specified target.
+    Without {magenta}-rf{reset}, it uses standard del or rd commands.

@@ -1,16 +1,16 @@
-NAME
-    scmdc - Secure CMD Compiler.
+{yellow}NAME{reset}
+    {cyan}scmdc{reset} - Secure CMD Compiler.
 
-SYNOPSIS
-    scmdc [-s] [-d] [-v] [-b] <filename>
+{yellow}SYNOPSIS{reset}
+    {cyan}scmdc{reset} [{magenta}-s{reset}] [{magenta}-d{reset}] [{magenta}-v{reset}] [{magenta}-b{reset}] {green}<filename>{reset}
 
-OPTIONS
-    -s    Silent mode; suppresses output.
-    -d    Debug mode; shows line-by-line processing.
-    -v    Verbose mode; turns on echo.
-    -b    Bat mode; processes .sbat into .bat files.
+{yellow}OPTIONS{reset}
+    {magenta}-s{reset}    Silent mode; suppresses output.
+    {magenta}-d{reset}    Debug mode; shows line-by-line processing.
+    {magenta}-v{reset}    Verbose mode; turns on echo.
+    {magenta}-b{reset}    Bat mode; processes .sbat into .bat files.
 
-DESCRIPTION
-    Compiles .scmd files into .cmd. It checks for "suspect" commands 
-    and paths defined in the config, disabling any blocked lines 
-    it encounters.
+{yellow}DESCRIPTION{reset}
+    Compiles .scmd files into .cmd.
+    It checks for "suspect" commands and paths defined in the 
+    config, disabling any blocked lines it encounters.

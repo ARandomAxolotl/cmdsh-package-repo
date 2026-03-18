@@ -1,11 +1,11 @@
-NAME
-    pacman - A winget wrapper with Arch-like syntax.
+{yellow}NAME{reset}
+    {cyan}pacman{reset} - A winget wrapper with Arch-like syntax.
 
-SYNOPSIS
-    pacman [flag] <package>
+{yellow}SYNOPSIS{reset}
+    {cyan}pacman{reset} [{magenta}flag{reset}] {green}<package>{reset}
 
-FLAGS
-    -S               Install a package via winget.
-    -Syu             Upgrade all installed winget packages.
-    -Ss              Search for a package.
-    -R               Uninstall a package.
+{yellow}FLAGS{reset}
+    {magenta}-S{reset}               Install a package via winget.
+    {magenta}-Syu{reset}             Upgrade all installed winget packages.
+    {magenta}-Ss{reset}              Search for a package.
+    {magenta}-R{reset}               Uninstall a package.

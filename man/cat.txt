@@ -1,13 +1,16 @@
-NAME
-    cat - Concatenate and display file content.
+{yellow}NAME{reset}
+    {cyan}cat{reset} - Concatenate and display file content.
 
-SYNOPSIS
-    cat [file]
+{yellow}SYNOPSIS{reset}
+    {cyan}cat{reset} [{magenta}-n{reset}] [{green}file{reset}]
 
-DESCRIPTION
-    Displays the contents of the specified [file] to the standard output.
-    If no file is provided, the command reads from standard input (stdin) 
-    using findstr.
+{yellow}OPTIONS{reset}
+    {magenta}-n{reset}    Number all output lines.
 
-EXIT STATUS
+{yellow}DESCRIPTION{reset}
+    Displays the contents of the specified [{green}file{reset}] to the standard output.
+    If no file is provided, the command reads from standard input (stdin).
+    Supports parsing custom markdown-like {magenta}color tags{reset}.
+
+{yellow}EXIT STATUS{reset}
     Returns the error level of the underlying type or findstr command.

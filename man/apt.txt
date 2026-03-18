@@ -1,15 +1,15 @@
-NAME
-    apt - A winget wrapper with Debian-like syntax.
+{yellow}NAME{reset}
+    {cyan}apt{reset} - A winget wrapper with Debian-like syntax.
 
-SYNOPSIS
-    apt [command] <package>
+{yellow}SYNOPSIS{reset}
+    {cyan}apt{reset} [{cyan}command{reset}] {green}<package>{reset}
 
-COMMANDS
-    install <pkg>   Installs the specified package via winget.
-    update          Lists available upgrades for all installed packages.
-    upgrade <pkg>   Upgrades a specific package to the latest version.
-    search <pkg>    Searches the winget repository for a package.
+{yellow}COMMANDS{reset}
+    {cyan}install{reset} {green}<pkg>{reset}   Installs the specified package via winget.
+    {cyan}update{reset}          Lists available upgrades for all installed packages.
+    {cyan}upgrade{reset} {green}<pkg>{reset}   Upgrades a specific package to the latest version.
+    {cyan}search{reset} {green}<pkg>{reset}    Searches the winget repository for a package.
 
-DESCRIPTION
+{yellow}DESCRIPTION{reset}
     Provides a familiar interface for users coming from Debian-based 
     systems to manage Windows applications.

@@ -1,9 +1,9 @@
-NAME
-    clear - Clears the terminal screen.
+{yellow}NAME{reset}
+    {cyan}clear{reset} - Clears the terminal screen.
 
-SYNOPSIS
-    clear
+{yellow}SYNOPSIS{reset}
+    {cyan}clear{reset}
 
-DESCRIPTION
+{yellow}DESCRIPTION{reset}
     Clears all text from the current command prompt window, 
     leaving only the cursor at the top-left.

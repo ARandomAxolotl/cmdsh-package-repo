@@ -1,10 +1,10 @@
-NAME
-    grep - Search for patterns in text or files with highlighting.
+{yellow}NAME{reset}
+    {cyan}grep{reset} - Search for patterns in text or files with highlighting.
 
-SYNOPSIS
-    grep <pattern> [file]
+{yellow}SYNOPSIS{reset}
+    {cyan}grep{reset} {green}<pattern>{reset} [{green}file{reset}]
 
-DESCRIPTION
-    Searches for the specified <pattern> using findstr. Matches 
-    are highlighted in bright red in the output.
-    If [file] is omitted, it reads from standard input.
+{yellow}DESCRIPTION{reset}
+    Searches for the specified {green}<pattern>{reset} using findstr.
+    Matches are highlighted in {red}bright red{reset} in the output.
+    If [{green}file{reset}] is omitted, it reads from standard input.

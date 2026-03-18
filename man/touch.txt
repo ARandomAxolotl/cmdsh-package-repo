@@ -1,10 +1,10 @@
-NAME
-    touch - Create files or update timestamps.
+{yellow}NAME{reset}
+    {cyan}touch{reset} - Create files or update timestamps.
 
-SYNOPSIS
-    touch <filename>
+{yellow}SYNOPSIS{reset}
+    {cyan}touch{reset} {green}<filename>{reset}
 
-DESCRIPTION
+{yellow}DESCRIPTION{reset}
     Creates a new empty file if it does not exist.
     If the file already exists, it updates the file's last 
     modified timestamp.
