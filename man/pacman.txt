@@ -1,0 +1,11 @@
+NAME
+    pacman - A winget wrapper with Arch-like syntax.
+
+SYNOPSIS
+    pacman [flag] <package>
+
+FLAGS
+    -S               Install a package via winget.
+    -Syu             Upgrade all installed winget packages.
+    -Ss              Search for a package.
+    -R               Uninstall a package.

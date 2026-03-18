@@ -1,0 +1,10 @@
+NAME
+    touch - Create files or update timestamps.
+
+SYNOPSIS
+    touch <filename>
+
+DESCRIPTION
+    Creates a new empty file if it does not exist.
+    If the file already exists, it updates the file's last 
+    modified timestamp.

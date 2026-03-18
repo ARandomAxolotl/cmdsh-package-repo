@@ -1,0 +1,15 @@
+NAME
+    apt - A winget wrapper with Debian-like syntax.
+
+SYNOPSIS
+    apt [command] <package>
+
+COMMANDS
+    install <pkg>   Installs the specified package via winget.
+    update          Lists available upgrades for all installed packages.
+    upgrade <pkg>   Upgrades a specific package to the latest version.
+    search <pkg>    Searches the winget repository for a package.
+
+DESCRIPTION
+    Provides a familiar interface for users coming from Debian-based 
+    systems to manage Windows applications.

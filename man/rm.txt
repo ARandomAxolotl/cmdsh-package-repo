@@ -1,0 +1,13 @@
+NAME
+    rm - Remove files or directories.
+
+SYNOPSIS
+    rm [-rf] [--no-preserve-root] <target>
+
+OPTIONS
+    -rf                 Force deletion of files or recursive deletion of folders.
+    --no-preserve-root  Allows operations on 'C:\' (Dangerous).
+
+DESCRIPTION
+    Deletes the specified target. Without -rf, it uses standard 
+    del or rd commands.

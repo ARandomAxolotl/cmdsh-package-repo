@@ -1,0 +1,10 @@
+NAME
+    grep - Search for patterns in text or files with highlighting.
+
+SYNOPSIS
+    grep <pattern> [file]
+
+DESCRIPTION
+    Searches for the specified <pattern> using findstr. Matches 
+    are highlighted in bright red in the output.
+    If [file] is omitted, it reads from standard input.

@@ -1,0 +1,15 @@
+NAME
+    func - Package manager for cSH functions.
+
+SYNOPSIS
+    func [install | uninstall | list | update | search | add-repo | purge] [target]
+
+COMMANDS
+    install <pkg>    Downloads and installs a package.
+    uninstall <pkg>  Removes an installed package.
+    list             Lists available cached packages.
+    list --installed Lists only packages currently on your system.
+    update           Refreshes the local repository indexes.
+    search <keyword> Searches cached repositories for a specific term.
+    add-repo <url>   Adds a new GitHub Raw URL to the config.
+    purge            Deletes all packages and configurations.

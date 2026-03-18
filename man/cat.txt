@@ -1,0 +1,13 @@
+NAME
+    cat - Concatenate and display file content.
+
+SYNOPSIS
+    cat [file]
+
+DESCRIPTION
+    Displays the contents of the specified [file] to the standard output.
+    If no file is provided, the command reads from standard input (stdin) 
+    using findstr.
+
+EXIT STATUS
+    Returns the error level of the underlying type or findstr command.

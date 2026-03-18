@@ -1,0 +1,9 @@
+NAME
+    clear - Clears the terminal screen.
+
+SYNOPSIS
+    clear
+
+DESCRIPTION
+    Clears all text from the current command prompt window, 
+    leaving only the cursor at the top-left.

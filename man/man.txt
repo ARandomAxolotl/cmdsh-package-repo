@@ -1,0 +1,13 @@
+NAME
+    man - Manual page manager and viewer.
+
+SYNOPSIS
+    man [install | update | list | remove | <command>]
+
+COMMANDS
+    <command>        Views the manual page for the specified command.
+    install <name>   Downloads a manual page from the repository.
+    update           Refreshes the manual repository index.
+    list             Lists all locally installed manual pages.
+    remove <name>    Deletes a specific manual page.
+    purge            Deletes all manual pages and configs.
