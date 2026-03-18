@@ -15,7 +15,7 @@ if not exist "!saveDir!" mkdir "!saveDir!"
 if not exist "!configPath!" (
     (
         echo # Default Repository
-        echo https://raw.githubusercontent.com/ARandomAxolotl/cmdSH/main/Functions/
+        echo https://raw.githubusercontent.com/ARandomAxolotl/cmdsh-package-repo/main/
         echo # Add more GitHub Raw URLs below
     ) > "!configPath!"
 )
@@ -31,7 +31,6 @@ if /i "!cmd!" == "update"         goto :update
 if /i "!cmd!" == "add-repo"       goto :addrepo
 if /i "!cmd!" == "search"         goto :search
 if /i "!cmd!" == "remake-config"  goto :remake
-if /i "!cmd!" == "purge"          goto :purge
 
 if /i "!cmd!" == "remove"         goto :uninstall
 if /i "!cmd!" == "update-source"  goto :update
@@ -40,7 +39,7 @@ if /i "!cmd!" == "remake"         goto :remake
 
 :: Help Screen
 echo %ESC%[33mcSH Package Manager%ESC%[0m
-echo Usage: %~n0 [install ^| uninstall ^| list ^| update ^| add-repo ^| search ^| purge]
+echo Usage: %~n0 [install ^| uninstall ^| list ^| update ^| add-repo ^| search ]
 goto :end
 
 :: --- Logic Blocks ---
@@ -52,9 +51,12 @@ call :install_pkg "!target!"
 goto :end
 
 :install_pkg
+:: THÊM VÀO: Đảm bảo biến cục bộ cho hàm đệ quy
+setlocal enabledelayedexpansion
 set "pkgToInstall=%~1"
 if exist "!funcDir!!pkgToInstall!.cmd" (
     echo %ESC%[33m[Notice]%ESC%[0m !pkgToInstall! is already installed.
+    endlocal
     exit /b
 )
 
@@ -122,6 +124,8 @@ if "!found!"=="true" (
     echo %ESC%[31m[Error]%ESC%[0m Function "!pkgToInstall!" not found in any repository.
     echo %ESC%[90mTip: Run 'update' to refresh your package list.%ESC%[0m
 )
+:: THÊM VÀO: Đóng môi trường biến cục bộ
+endlocal
 exit /b
 
 :addrepo
@@ -289,16 +293,6 @@ goto :end
     echo https://raw.githubusercontent.com/ARandomAxolotl/cmdsh-package-repo/main/
 ) > "!configPath!"
 echo %ESC%[32m[Success]%ESC%[0m Config reset.
-goto :end
-
-:purge
-set /p "conf=Purge all? (y/N): "
-if /i "!conf!"=="y" ( 
-    rd /s /q "!funcDir!"
-    rd /s /q "!configDir!"
-    echo %ESC%[31mPurged. Restart shell to re-initialize.%ESC%[0m
-    exit /b 
-)
 goto :end
 
 :end

@@ -116,6 +116,7 @@ for %%F in ("!saveDir!\*.txt") do (
                     cat "!manDir!!target!.txt"
                     echo.
                     echo %ESC%[90m--------------------------------------------------%ESC%[0m
+					echo.
                 ) else (
                     echo %ESC%[31m[Error] Failed to download !target!.txt%ESC%[0m
                 )
@@ -130,6 +131,7 @@ goto :end
 if exist "!manDir!!cmd!.txt" (
     echo %ESC%[33m--- Manual Page: !cmd! ---%ESC%[0m
     cat "!manDir!!cmd!.txt"
+	echo.
 ) else (
     echo %ESC%[31m[Error] No manual entry for "!cmd!".%ESC%[0m
     echo %ESC%[90mTip: Try 'man install !cmd!' to download it.%ESC%[0m
