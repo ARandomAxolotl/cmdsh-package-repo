@@ -23,3 +23,5 @@ package-11 : install
 version : 1
 package-12 : woman
 version : 1
+package-13 : man
+version : 1
