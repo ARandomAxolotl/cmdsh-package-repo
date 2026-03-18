@@ -82,7 +82,6 @@ if exist "!manDir!!target!.txt" (
 goto :end
 
 :purge
-rd /s /q "!configDir!" 2>nul
 rd /s /q "!manDir!" 2>nul
 echo %ESC%[31mAll manual data purged.%ESC%[0m
 goto :end
