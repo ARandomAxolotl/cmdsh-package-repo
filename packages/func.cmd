@@ -111,7 +111,7 @@ if "!found!"=="true" (
     
     REM Download the actual cmd file
     echo %ESC%[36mDownloading !pkgToInstall!.cmd...%ESC%[0m
-    curl -f -s "!winnerUrl!!pkgToInstall!.cmd" --output "!funcDir!!pkgToInstall!.cmd"
+    curl -f -sL "!winnerUrl!!pkgToInstall!.cmd" --output "!funcDir!!pkgToInstall!.cmd"
     if not errorlevel 1 (
         echo %ESC%[32m[Success]%ESC%[0m Installed !pkgToInstall!
     ) else (

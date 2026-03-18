@@ -16,7 +16,7 @@ if not exist "!manDir!" mkdir "!manDir!"
 if not exist "!configPath!" (
     (
         echo # Default Manual Repository (Meta-Repo)
-        echo https://raw.githubusercontent.com/ARandomAxolotl/cmdSH/main/Manuals/
+        echo https://raw.githubusercontent.com/ARandomAxolotl/cmdsh-package-repo/main/
     ) > "!configPath!"
 )
 
@@ -103,7 +103,7 @@ for %%F in ("!saveDir!\*.txt") do (
                 set "urlName=%%~nF" & set "urlName=!urlName:_=/!" & set "urlName=https://!urlName!/"
                 
                 echo %ESC%[36mDownloading !target!.txt...%ESC%[0m
-                curl -f -s "!urlName!!target!.txt" --output "!manDir!!target!.txt"
+                curl -f -sL "!urlName!!target!.txt" --output "!manDir!!target!.txt"
                 if not errorlevel 1 (
                     echo %ESC%[32m[Success] Manual installed. Displaying content:%ESC%[0m
                     echo %ESC%[90m--------------------------------------------------%ESC%[0m
