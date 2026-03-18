@@ -1,32 +1,27 @@
-NAME
-    func - Package manager for cSH functions.
+{yellow}NAME{reset}
+    {cyan}func{reset} - Package manager for cSH functions.
 
-SYNOPSIS
-    func [command] [target] [options]
+{yellow}SYNOPSIS{reset}
+    {cyan}func{reset} [{cyan}command{reset}] [{green}target{reset}] [{magenta}options{reset}]
 
-    Commands: install | uninstall | list | update | full-upgrade | 
-              search | add-repo | remove-repo | remake-config | help
+    Commands: {cyan}install{reset} | {cyan}uninstall{reset} | {cyan}list{reset} | {cyan}update{reset} | {cyan}full-upgrade{reset} | 
+              {cyan}search{reset} | {cyan}add-repo{reset} | {cyan}remove-repo{reset} | {cyan}remake-config{reset} | {cyan}help{reset}
 
-COMMANDS
-    install <pkg>       Resolves dependencies and installs the specified package[cite: 40].
-    uninstall <pkg>     Removes an installed package from your local system[cite: 40].
-                        (Alias: remove)
-    list                Lists all available packages in the cached repositories[cite: 41].
-    list --installed    Lists only the packages currently installed on your system[cite: 41].
-    update              Refreshes the local repository indexes by fetching the latest data[cite: 42].
-                        (Alias: update-source)
-    full-upgrade        Checks all installed packages and re-downloads them to ensure 
-                        they are on the latest cached versions.
-                        (Alias: upgrade)
-    search <keyword>    Searches cached repositories for a specific term in names or descriptions[cite: 42].
-    add-repo <url>      Adds a new repository URL to your configuration file.
-                        (Alias: addrepo)
-    remove-repo <url>   Removes a specified repository URL from your configuration file.
-                        (Alias: removerepo)
-    remake-config       Resets the configuration file to the default repository list. 
-                        (Alias: remake)
-    help [command]      Displays the general help menu or detailed usage for a specific command.
+{yellow}COMMANDS{reset}
+    {cyan}install{reset} {green}<pkg>{reset}       Resolves dependencies and installs the specified package.
+    {cyan}uninstall{reset} {green}<pkg>{reset}     Removes an installed package from your local system.
+                        (Alias: {cyan}remove{reset})
+    {cyan}list{reset}                Lists all available packages in the cached repositories.
+    {cyan}list{reset} {magenta}--installed{reset}    Lists only the packages currently installed on your system.
+    {cyan}update{reset}              Refreshes the local repository indexes by fetching the latest data.
+                        (Alias: {cyan}update-source{reset})
+    {cyan}full-upgrade{reset}        Checks all installed packages and re-downloads them to ensure 
+                        they are on the latest cached versions. (Alias: {cyan}upgrade{reset})
+    {cyan}search{reset} {green}<keyword>{reset}    Searches cached repositories for a specific term.
+    {cyan}add-repo{reset} {green}<url>{reset}      Adds a new repository URL to your configuration file.
+    {cyan}remove-repo{reset} {green}<url>{reset}   Removes a specified repository URL from your configuration file.
+    {cyan}remake-config{reset}       Resets the configuration file to the default repository list.
+    {cyan}help{reset} [{green}command{reset}]      Displays the general help menu or detailed usage.
 
-OPTIONS
-    -h, --help          Can be appended to any command to display specific usage instructions 
-                        (e.g., `func install --help`).
+{yellow}OPTIONS{reset}
+    {magenta}-h{reset}, {magenta}--help{reset}          Can be appended to any command to display specific usage instructions.
