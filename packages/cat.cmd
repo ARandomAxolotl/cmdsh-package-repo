@@ -23,8 +23,8 @@ goto :parse_args
 :: --- Execution ---
 :execute
 if "!targetFile!"=="" (
-    :: If no file is provided, read from standard input (stdin)
-    findstr "^"
+    :: FIX: Dùng ^^ để Batch không "ăn" mất ký tự của regex
+    findstr "^^"
     goto :eof
 )
 
@@ -35,7 +35,8 @@ if not exist "!targetFile!" (
 
 :: Read the file and process colors / line numbers
 set "lineNum=0"
-for /f "usebackq tokens=1,* delims=:" %%A in (`findstr /n "^" "!targetFile!"`) do (
+:: FIX: Nhân đôi ^^ bên trong backticks để bảo toàn ký tự ^ cho findstr
+for /f "usebackq tokens=1,* delims=:" %%A in (`findstr /n "^^" "!targetFile!"`) do (
     set /a lineNum+=1
     set "line=%%B"
     
