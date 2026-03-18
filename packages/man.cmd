@@ -64,7 +64,7 @@ if not exist "!manDir!!cmd!.txt" (
 )
 
 echo %ESC%[33m--- Manual Page: !cmd! ---%ESC%[0m
-cat "!manDir!!cmd!.txt"
+cat "!manDir!!cmd!.txt" | more
 goto :end
 
 :list
