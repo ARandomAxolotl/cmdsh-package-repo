@@ -14,7 +14,7 @@ version : 1
 package-4 : func
 description : functions manager for cSH
 dependencies : none
-version : 1
+version : 2
 package-5 : grep
 description : findstr shortcut
 dependencies : none

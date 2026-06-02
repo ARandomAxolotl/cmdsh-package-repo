@@ -1,5 +1,5 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal disabledelayedexpansion
 
 :: --- Configuration ---
 :: Get the true ESC character for colors
@@ -22,24 +22,25 @@ goto :parse_args
 
 :: --- Execution ---
 :execute
-if "!targetFile!"=="" (
-    :: FIX: Dùng ^^ để Batch không "ăn" mất ký tự của regex
-    findstr "^^"
+if "%targetFile%"=="" (
+    findstr "^"
     goto :eof
 )
 
-if not exist "!targetFile!" (
+if not exist "%targetFile%" (
+    setlocal enabledelayedexpansion
     echo %ESC%[31mcat: !targetFile!: No such file or directory%ESC%[0m
+    endlocal
     exit /b 1
 )
 
 :: Read the file and process colors / line numbers
 set "lineNum=0"
-:: FIX: Nhân đôi ^^ bên trong backticks để bảo toàn ký tự ^ cho findstr
-for /f "usebackq tokens=1,* delims=:" %%A in (`findstr /n "^^" "!targetFile!"`) do (
+for /f "usebackq tokens=1,* delims=:" %%A in (`findstr /n "^" "%targetFile%"`) do (
     set /a lineNum+=1
     set "line=%%B"
     
+    setlocal enabledelayedexpansion
     if defined line (
         :: Miniature Markdown Color Parser
         set "line=!line:{red}=%ESC%[31m!"
@@ -65,5 +66,6 @@ for /f "usebackq tokens=1,* delims=:" %%A in (`findstr /n "^^" "!targetFile!"`) 
             echo.
         )
     )
+    endlocal
 )
 exit /b 0
