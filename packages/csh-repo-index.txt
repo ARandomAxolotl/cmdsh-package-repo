@@ -6,7 +6,7 @@ version : 1
 package-2 : cat
 description : type shortcut
 dependencies : none
-version : 2
+version : 3
 package-3 : clear
 description : cls shortcut
 dependencies : none
