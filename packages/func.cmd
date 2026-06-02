@@ -8,13 +8,11 @@ set "baseDir=%~dp0.."
 set "configDir=!baseDir!\.config"
 set "configPath=!configDir!\funcpath"
 set "saveDir=!configDir!\saved"
-set "backupDir=!configDir!\backup"
 set "funcDir=%~dp0"
 
 :: --- Initialization ---
 if not exist "!configDir!" mkdir "!configDir!"
 if not exist "!saveDir!" mkdir "!saveDir!"
-if not exist "!backupDir!" mkdir "!backupDir!"
 if not exist "!configPath!" (
     (
         echo # Default Repository
@@ -37,7 +35,6 @@ if /i "!cmd!" == "--help"         goto :help
 
 if /i "!cmd!" == "install"        goto :install
 if /i "!cmd!" == "uninstall"      goto :uninstall
-if /i "!cmd!" == "undo"           goto :undo
 if /i "!cmd!" == "list"           goto :list
 if /i "!cmd!" == "update"         goto :update
 if /i "!cmd!" == "add-repo"       goto :addrepo
@@ -65,14 +62,14 @@ goto :end
 :help
 :: If helpSubject is empty, use target (e.g., "func help install")
 if "!helpSubject!"=="" set "helpSubject=!target!"
+
 if /i "!helpSubject!"=="" (
     echo %ESC%[33mcSH Package Manager%ESC%[0m
     echo Usage: %~n0 [command] [options]
     echo(
     echo %ESC%[36mCommands:%ESC%[0m
     echo   %ESC%[32minstall%ESC%[0m        Install a package from cached repositories
-    echo   %ESC%[32muninstall%ESC%[0m      Move an installed package to backup cache
-    echo   %ESC%[32mundo%ESC%[0m           Restore the last uninstalled package
+    echo   %ESC%[32muninstall%ESC%[0m      Remove an installed package
     echo   %ESC%[32mlist%ESC%[0m           List available or installed packages
     echo   %ESC%[32mupdate%ESC%[0m         Fetch latest index from all configured repositories
     echo   %ESC%[32mfull-upgrade%ESC%[0m   Upgrade all installed packages to their latest versions
@@ -92,11 +89,8 @@ if /i "!helpSubject!"=="install" (
     echo Resolves dependencies and installs the specified package.
 ) else if /i "!helpSubject!"=="uninstall" (
     echo Usage: %~n0 uninstall ^<package_name^>
-    echo Backs up and removes the specified package script from active use.
+    echo Deletes the specified package script from your local system.
     echo Alias: remove
-) else if /i "!helpSubject!"=="undo" (
-    echo Usage: %~n0 undo
-    echo Restores the most recently uninstalled package from the backup folder.
 ) else if /i "!helpSubject!"=="add-repo" (
     echo Usage: %~n0 add-repo ^<url^>
     echo Adds a raw GitHub URL to your config for package fetching.
@@ -158,7 +152,6 @@ for %%F in ("!saveDir!\*.txt") do (
         for /f "usebackq tokens=1,* delims=:" %%A in ("%%F") do (
             set "key=%%A" & set "key=!key: =!"
             set "val=%%B"
-    
             if defined val for /f "tokens=* delims= " %%V in ("!val!") do set "val=%%V"
            
             if "!key:~0,7!"=="package" (
@@ -170,7 +163,6 @@ for %%F in ("!saveDir!\*.txt") do (
                     set "inPkg=false"
                 )
             )
-     
             if "!inPkg!"=="true" (
                 if "!key!"=="dependencies" set "pkgDeps=!val!"
                 if "!key!"=="version" set "pkgVer=!val!"
@@ -240,6 +232,7 @@ echo(
 if !upgradeCount! equ 0 (
     echo %ESC%[33mNo external packages found to upgrade.%ESC%[0m
 ) else (
+    :: BUG FIXED: Removed parentheses from "package(s)" to stop cmd.exe from closing the else block early.
     echo %ESC%[32m[Success]%ESC%[0m Upgrade complete for !upgradeCount! packages.
 )
 goto :end
@@ -292,6 +285,7 @@ for %%F in ("!saveDir!\*.txt") do (
 if !matchCount! equ 0 (
     echo %ESC%[31mNo matches found.%ESC%[0m
 ) else (
+    :: BUG FIXED: Same parenthesis issue fixed here.
     echo(
     echo %ESC%[32mSearch complete. Found !matchCount! matching packages.%ESC%[0m
 )
@@ -396,28 +390,11 @@ for %%F in ("!funcDir!*.cmd") do (
 goto :end
 
 :uninstall
-if "!target!"=="" ( echo %ESC%[31m[Error]%ESC%[0m Please specify a package to uninstall. & goto :end )
 if exist "!funcDir!!target!.cmd" ( 
-    move /y "!funcDir!!target!.cmd" "!backupDir!\!target!.cmd" >nul
-    echo %ESC%[32m[Success]%ESC%[0m Uninstalled "!target!" and moved to backup cache.
+    del "!funcDir!!target!.cmd" 
+    echo %ESC%[32m[Success]%ESC%[0m Uninstalled !target!.
 ) else ( 
     echo %ESC%[31m[Error]%ESC%[0m Package "!target!" not found. 
-)
-goto :end
-
-:undo
-:: Find the most recently modified/added file in the backup folder
-set "lastBackup="
-for /f "delims=" %%I in ('dir "!backupDir!\*.cmd" /b /o-d 2^>nul') do (
-    if not defined lastBackup set "lastBackup=%%I"
-)
-
-if defined lastBackup (
-    set "pkgName=!lastBackup:.cmd=!"
-    move /y "!backupDir!\!lastBackup!" "!funcDir!!lastBackup!" >nul
-    echo %ESC%[32m[Success]%ESC%[0m Restored last uninstalled package: !pkgName!
-) else (
-    echo %ESC%[31m[Error]%ESC%[0m No package found in backup history to restore.
 )
 goto :end
 
