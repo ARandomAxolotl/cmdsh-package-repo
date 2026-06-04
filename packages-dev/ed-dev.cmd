@@ -8,7 +8,7 @@ set "outputfile=%1"
 
 :loop
 :: 1. Turn OFF delayed expansion while we take user input.
-:: This ensures that '!' characters are safely read as raw text[cite: 7].
+:: This ensures that '!' characters are safely read as raw text.
 setlocal disabledelayedexpansion
 set "i="
 set /p "i="
@@ -30,7 +30,13 @@ if "!i!" == "^!exit" (
 	endlocal & endlocal
 	goto loop
 ) else if "!i!" == "^!clear" (
-	echo Cleared file "%outputfile%"
+	for /F %%A in ('echo prompt $E ^| cmd') do set "ESC=%%A"
+	set "RED=!ESC![31m"
+	set "RESET=!ESC![0m"
+	
+	:: Output the red text and reset it immediately without dangling '!' marks
+	echo !RED!Cleared "%outputfile%"!RESET!
+	
 	:: This wipes the file completely empty (0 bytes) with no trailing newline
 	type nul > "%outputfile%"
 	endlocal & endlocal
