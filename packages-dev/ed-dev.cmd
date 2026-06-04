@@ -6,6 +6,12 @@ if "%1" == "" (
 )
 set "outputfile=%1"
 
+if not exist %~dp0.cache mkdir %~dp0.cache
+type nul > "%~dp0.cache\temp.txt"
+
+type "%outputfile%" > "%~dp0.cache\temp.txt"
+rem Undo!!
+
 :loop
 :: 1. Turn OFF delayed expansion while we take user input.
 :: This ensures that '!' characters are safely read as raw text.
@@ -16,6 +22,7 @@ set /p "i="
 :: 2. Temporarily turn it ON just to safely evaluate the string.
 setlocal enabledelayedexpansion
 if "!i!" == "^!exit" (
+	del %~dp0.cache\temp.txt
 	exit /b 0 
 ) else if "!i!" == "^!cat" (
 	echo -----------
@@ -28,6 +35,14 @@ if "!i!" == "^!exit" (
 	call cat -n "%outputfile%"
 	echo -----------
 	endlocal & endlocal
+	goto loop
+) else if "!i!" == "^!undo" (
+	for /F %%A in ('echo prompt $E ^| cmd') do set "ESC=%%A"
+	set "RED=!ESC![31m"
+	set "RESET=!ESC![0m
+	
+	echo !RED!Undo-ed!RESET!
+	type "%~dp0.cache\temp.txt" > "%outputfile%"
 	goto loop
 ) else if "!i!" == "^!clear" (
 	for /F %%A in ('echo prompt $E ^| cmd') do set "ESC=%%A"

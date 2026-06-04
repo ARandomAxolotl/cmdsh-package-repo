@@ -39,7 +39,7 @@ if /i "!target!"=="remove"  ( call :cmd_remove  "!arg2!"    & exit /b )
 
 :: Default: view a manual page (auto-install if missing)
 if exist "!manDir!!target!.txt" (
-    call cat "!manDir!!target!.txt"
+    call cat "!manDir!!target!.txt" | more
     exit /b
 )
 echo Manual "!target!" not found locally. Auto-installing...
@@ -266,7 +266,7 @@ for %%F in ("!saveDir!\*.txt") do (
                     if exist "!manDir!!target!.txt" (
                         echo !ESC![32m[Success] Manual installed. Displaying content:!ESC![0m
                         echo !ESC![90m--------------------------------------------------!ESC![0m
-                        call cat "!manDir!!target!.txt"
+                        call cat "!manDir!!target!.txt" | more
                         echo.
                         echo !ESC![90m--------------------------------------------------!ESC![0m
                     ) else (

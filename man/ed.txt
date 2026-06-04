@@ -27,6 +27,9 @@
         Wipes the entire file instantly, dropping its size down to exactly 0 bytes 
         so you can start typing again from scratch.
 
+    {cyan}!undo{reset}
+        Safely undo file to the last save.
+
     {cyan}!exit{reset}
         Safely saves your changes, breaks out of the editing cycle, and returns 
         you back to the main terminal prompt.
