@@ -1,0 +1,47 @@
+{yellow}NAME{reset}
+    {cyan}ed{reset} - The classic line-oriented text editor for cSH
+
+{yellow}SYNOPSIS{reset}
+    {cyan}ed{reset} {green}<filename>{reset}
+
+{yellow}DESCRIPTION{reset}
+    {cyan}ed{reset} is a minimalist, keyboard-driven line editor for the command line. 
+    It streams raw keyboard inputs directly into the targeted text file. 
+    Unlike a full visual editor, it stays out of your way and operates strictly 
+    line-by-line using micro-commands.
+
+{yellow}INTERACTIVE COMMANDS{reset}
+    When running {cyan}ed{reset}, any normal line of text you type is immediately written 
+    and appended directly to the active file. To execute control actions, 
+    prefix your command with the {yellow}!{reset} character:
+
+    {cyan}!cat{reset}
+        Displays the entire contents of the file you are editing using your standard 
+        viewer configuration.
+
+    {cyan}!cat2{reset}
+        Displays the file contents cleanly prefixed with {gray}line numbers{reset}. 
+        Perfect for tracking your file size and debugging code structure.
+
+    {cyan}!clear{reset}
+        Wipes the entire file instantly, dropping its size down to exactly 0 bytes 
+        so you can start typing again from scratch.
+
+    {cyan}!exit{reset}
+        Safely saves your changes, breaks out of the editing cycle, and returns 
+        you back to the main terminal prompt.
+
+{yellow}EXAMPLES{reset}
+    Open or create a script file:
+        {green}ed test.txt{reset}
+
+    Add lines, view them with numbers, and exit:
+        This is line one.
+        This is line two.
+        {cyan}!cat2{reset}
+        {gray}1{reset} This is line one.
+        {gray}2{reset} This is line two.
+        {cyan}!exit{reset}
+
+{yellow}SEE ALSO{reset}
+    {cyan}cat{reset}(1), {cyan}func{reset}(1)

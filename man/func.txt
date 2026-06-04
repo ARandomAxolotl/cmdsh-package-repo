@@ -1,27 +1,72 @@
 {yellow}NAME{reset}
-    {cyan}func{reset} - Package manager for cSH functions.
+    {cyan}func{reset} - cSH Command Line Package Manager for Windows
 
 {yellow}SYNOPSIS{reset}
-    {cyan}func{reset} [{cyan}command{reset}] [{green}target{reset}] [{magenta}options{reset}]
+    {cyan}func{reset} [{cyan}command{reset}] [{green}options / package_name{reset}]
 
-    Commands: {cyan}install{reset} | {cyan}uninstall{reset} | {cyan}list{reset} | {cyan}update{reset} | {cyan}full-upgrade{reset} | 
-              {cyan}search{reset} | {cyan}add-repo{reset} | {cyan}remove-repo{reset} | {cyan}remake-config{reset} | {cyan}help{reset}
+{yellow}DESCRIPTION{reset}
+    {cyan}func{reset} is a lightweight, recursive package manager built natively for 
+    Windows batch script environments. It connects to raw GitHub repositories or 
+    local directories to safely download, upgrade, and track system utility commands 
+    while natively handling dependencies and configuration caching.
 
 {yellow}COMMANDS{reset}
-    {cyan}install{reset} {green}<pkg>{reset}       Resolves dependencies and installs the specified package.
-    {cyan}uninstall{reset} {green}<pkg>{reset}     Removes an installed package from your local system.
-                        (Alias: {cyan}remove{reset})
-    {cyan}list{reset}                Lists all available packages in the cached repositories.
-    {cyan}list{reset} {magenta}--installed{reset}    Lists only the packages currently installed on your system.
-    {cyan}update{reset}              Refreshes the local repository indexes by fetching the latest data.
-                        (Alias: {cyan}update-source{reset})
-    {cyan}full-upgrade{reset}        Checks all installed packages and re-downloads them to ensure 
-                        they are on the latest cached versions. (Alias: {cyan}upgrade{reset})
-    {cyan}search{reset} {green}<keyword>{reset}    Searches cached repositories for a specific term.
-    {cyan}add-repo{reset} {green}<url>{reset}      Adds a new repository URL to your configuration file.
-    {cyan}remove-repo{reset} {green}<url>{reset}   Removes a specified repository URL from your configuration file.
-    {cyan}remake-config{reset}       Resets the configuration file to the default repository list.
-    {cyan}help{reset} [{green}command{reset}]      Displays the general help menu or detailed usage.
+    {cyan}update{reset}
+        Fetches the latest package indexes from all configured remote and local 
+        repositories and overwrites the active cache files. Always run this 
+        before modifying or installing packages.
 
-{yellow}OPTIONS{reset}
-    {magenta}-h{reset}, {magenta}--help{reset}          Can be appended to any command to display specific usage instructions.
+    {cyan}list{reset} [{green}--installed{reset}]
+        By default, lists all available packages found inside your cached repository 
+        indexes. Add the {green}--installed{reset} flag to cleanly display the `.cmd` utility 
+        packages currently sitting active on your local system directory.
+
+    {cyan}search{reset} {green}<keyword>{reset}
+        Queries all repository indexes looking for matches inside package names, 
+        versions, or descriptions. 
+
+    {cyan}install{reset} {green}<package_name>{reset}
+        Locates the specified package from your cache files, automatically parses 
+        and recursively handles any listed upstream dependencies, and pulls the raw 
+        source script down using an optimized `curl` routine.
+
+    {cyan}uninstall{reset} {green}<package_name>{reset}
+        Removes a command script entirely from your local executable environment. 
+        {gray}Alias: remove{reset}
+
+    {cyan}full-upgrade{reset}
+        Loops through your entire folder of custom commands and cleanly re-downloads 
+        the latest version of every single package directly from the repo caches. 
+        {gray}Alias: upgrade{reset}
+
+    {cyan}add-repo{reset} {green}<url>{reset}
+        Appends a brand new GitHub Raw repository root URL or path string directly 
+        into your active package router config. 
+        {gray}Alias: addrepo{reset}
+
+    {cyan}remove-repo{reset} {green}<url>{reset}
+        Removes an active package repository string definition out of your config 
+        environment seamlessly.
+        {gray}Alias: removerepo{reset}
+
+    {cyan}remake-config{reset}
+        Resets and re-initializes your `.config\funcpath` mapping file completely 
+        back to its default state.
+        {gray}Alias: remake{reset}
+
+    {cyan}help{reset} [{green}command{reset}]
+        Displays main routing context guidelines, or passes specialized arguments 
+        on specialized usage rules for single parameters.
+        {gray}Flags: -h, --help{reset}
+
+{yellow}ENVIRONMENT PATHS{reset}
+    All persistent information is generated relative to the script runtime directory:
+      - {magenta}Config File{reset}:  `..\.config\funcpath`
+      - {magenta}Cache Storage{reset}: `..\.config\saved\`
+      - {magenta}Binary Folder{reset}: Identical path location to `func.cmd`
+
+{yellow}TIPS & TROUBLESHOOTING{reset}
+    - If your commands throw an execution error, make sure to execute {cyan}func update{reset} 
+      to re-cache package headers before building.
+    - If you are trying out an editor like {green}ed-dev{reset}, keep in mind it has a dependency 
+      on {green}cat{reset}, which `func` will automatically pull down for you during installation!

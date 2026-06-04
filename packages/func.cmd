@@ -4,15 +4,22 @@ setlocal enabledelayedexpansion
 :: --- Configuration & Paths ---
 :: Get the true ESC character to ensure colors work even after copy-pasting
 for /F %%a in ('echo prompt $E ^| cmd') do set "ESC=%%a"
-set "baseDir=%~dp0.."
+
+:: Extract the absolute path of the parent directory cleanly
+for %%I in ("%~dp0..") do set "baseDir=%%~fI"
+
 set "configDir=!baseDir!\.config"
 set "configPath=!configDir!\funcpath"
 set "saveDir=!configDir!\saved"
 set "funcDir=%~dp0"
 
 :: --- Initialization ---
-if not exist "!configDir!" mkdir "!configDir!"
-if not exist "!saveDir!" mkdir "!saveDir!"
+if not exist "!configDir!" (
+    mkdir "!configDir!"
+)
+if not exist "!saveDir!" (
+    mkdir "!saveDir!"
+)
 if not exist "!configPath!" (
     (
         echo # Default Repository
@@ -126,6 +133,9 @@ setlocal enabledelayedexpansion
 set "pkgToInstall=%~1"
 set "installMode=%~2"
 
+:: Guard rail: If package name is empty, exit immediately
+if "!pkgToInstall!"=="" endlocal & exit /b
+
 :: Skip file existence check if in "force" mode (used for full-upgrade)
 if /i not "!installMode!"=="force" (
     if exist "!funcDir!!pkgToInstall!.cmd" (
@@ -145,24 +155,46 @@ for %%F in ("!saveDir!\*.txt") do (
     if "!found!"=="false" (
         REM Extract base URL from cache file name
         set "urlName=%%~nF"
-        set "urlName=!urlName:_=/!"
-        set "urlName=https://!urlName!"
+        
+        REM Check if it's a local path by looking for a drive signature (e.g., "D_")
+        set "driveCheck=!urlName:~1,1!"
+        
+        if "!driveCheck!"=="_" (
+            REM Capture the drive letter cleanly
+            set "driveLetter=!urlName:~0,1!"
+            REM Capture the remainder of the path after the drive prefix
+            set "restOfPath=!urlName:~2!"
+            set "restOfPath=!restOfPath:_=/!"
+            
+            REM Build a flawless local URI with the drive colon included
+            set "workingUrl=file://!driveLetter!:_SLASH_!restOfPath!"
+            set "workingUrl=!workingUrl:_SLASH_=/!"
+        ) else (
+            REM Reconstruct standard web repository: https://path/
+            set "urlName=!urlName:_=/!"
+            set "workingUrl=https://!urlName!"
+        )
+        
+        REM Ensure the working URL ends with exactly one trailing slash
+        if not "!workingUrl:~-1!"=="/" set "workingUrl=!workingUrl!/"
         
         set "inPkg=false"
         for /f "usebackq tokens=1,* delims=:" %%A in ("%%F") do (
             set "key=%%A" & set "key=!key: =!"
             set "val=%%B"
+    
             if defined val for /f "tokens=* delims= " %%V in ("!val!") do set "val=%%V"
            
             if "!key:~0,7!"=="package" (
                 if /i "!val!"=="!pkgToInstall!" (
                     set "inPkg=true"
                     set "found=true"
-                    set "winnerUrl=!urlName!/"
+                    set "winnerUrl=!workingUrl!"
                 ) else (
                     set "inPkg=false"
                 )
             )
+     
             if "!inPkg!"=="true" (
                 if "!key!"=="dependencies" set "pkgDeps=!val!"
                 if "!key!"=="version" set "pkgVer=!val!"
@@ -181,14 +213,16 @@ if "!found!"=="true" (
             set "depName=%%D"
             for /f "tokens=* delims= " %%T in ("!depName!") do set "depName=%%T"
             
-            echo %ESC%[35mInstalling dependency: !depName!%ESC%[0m
-            call :install_pkg "!depName!" "normal"
+            if not "!depName!"=="" if not "!depName!"==" " (
+                echo %ESC%[35mInstalling dependency: !depName!%ESC%[0m
+                call :install_pkg "!depName!" "normal"
+            )
         )
     )
     
     REM Download the actual cmd file
-    echo %ESC%[36mDownloading !pkgToInstall!.cmd...%ESC%[0m
-    curl -f -sL "!winnerUrl!!pkgToInstall!.cmd" --output "!funcDir!!pkgToInstall!.cmd"
+    echo %ESC%[36mDownloading !pkgToInstall!.cmd from !winnerUrl!...%ESC%[0m
+    curl -f -L -s "!winnerUrl!!pkgToInstall!.cmd" --output "!funcDir!!pkgToInstall!.cmd"
     if not errorlevel 1 (
         echo %ESC%[32m[Success]%ESC%[0m Installed !pkgToInstall!
     ) else (
@@ -305,14 +339,22 @@ goto :end
 :fetch_repo
 setlocal enabledelayedexpansion
 set "url=%~1"
+
+:: Normalize all backslashes to forward slashes first to make parsing consistent
+set "url=!url:\=/!"
 if not "!url:~-1!"=="/" set "url=!url!/"
 
-:: Format URL into a valid filename
-set "sName=!url:https://=!" & set "sName=!sName:/=_!" & set "sName=!sName::=!"
+:: Format URL into a valid filename (Strips protocols and sanitizes characters)
+set "sName=!url!"
+set "sName=!sName:https://=!"
+set "sName=!sName:http://=!"
+set "sName=!sName:file://=!"
+set "sName=!sName:/=_!"
+set "sName=!sName::=!"
 
 echo %ESC%[33mFetching: !url!csh-repo-index.txt%ESC%[0m
 set "tempFile=!saveDir!\temp_!RANDOM!.txt"
-curl -f -L -s "!url!csh-repo-index.txt" > "!tempFile!"
+curl -f -L -s "!url!csh-repo-index.txt" --output "!tempFile!"
 
 if !errorlevel! equ 0 (
     set "isMeta=false"
@@ -355,11 +397,23 @@ exit /b
 if /i "!target!" == "--installed" goto :list_installed
 echo %ESC%[36mAvailable Packages (Cached):%ESC%[0m
 for %%F in ("!saveDir!\*.txt") do (
-    REM Reconstruct URL from filename for display
     set "urlName=%%~nF"
-    set "urlName=!urlName:_=/!"
+    set "driveCheck=!urlName:~1,1!"
+    
+    if "!driveCheck!"=="_" (
+        set "driveLetter=!urlName:~0,1!"
+        set "restOfPath=!urlName:~2!"
+        set "restOfPath=!restOfPath:_=/!"
+        set "displayUrl=file://!driveLetter!:_SLASH_!restOfPath!"
+        set "displayUrl=!displayUrl:_SLASH_=/!"
+    ) else (
+        set "urlName=!urlName:_=/!"
+        set "displayUrl=https://!urlName!"
+    )
+    if not "!displayUrl:~-1!"=="/" set "displayUrl=!displayUrl!/"
+    
     echo(
-    echo %ESC%[33m--- Source: https://!urlName!---%ESC%[0m
+    echo %ESC%[33m--- Source: !displayUrl!---%ESC%[0m
     
     set "pkgName=" & set "pkgDesc=" & set "pkgVer=" & set "pkgDeps="
     for /f "usebackq tokens=1,* delims=:" %%A in ("%%F") do (

@@ -1,0 +1,9 @@
+type : repo
+package-1 : testsudo-dev
+description : test if sudo for windows is installed(rare on newer windows builds) enabled/disabled
+dependencies : none
+version : 1
+package-2 : ed-dev
+description : ed-the unix thing, u should use vim instead, also quit vim by press esc, then :qw
+dependencies : cat
+version : 1

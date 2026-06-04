@@ -1,0 +1,11 @@
+{yellow}NAME{reset}
+    {cyan}tool{reset} - A tool
+
+{yellow}SYNOPSIS{reset}
+    {cyan}tool{reset} [{cyan}command{reset}]
+
+{yellow}COMMANDS{reset}
+    {cyan}comamnds{reset} {green}additional args{reset} - what it do
+
+{yellow}DESCRIPTION{reset}
+    Tool
