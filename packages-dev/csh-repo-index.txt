@@ -7,3 +7,7 @@ package-2 : ed-dev
 description : ed-the unix thing, u should use vim instead, also quit vim by press esc, then :qw
 dependencies : cat
 version : 1
+package-3 : configd-dev
+description : configuratorrrrrrrrrrrrrrrrrrrrrrr
+dependencies : none
+version : 1
