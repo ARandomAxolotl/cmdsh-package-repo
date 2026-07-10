@@ -1,0 +1,4 @@
+#include<iostream>
+int main() {
+cout << "i use arch btw\n";
+return 1;
