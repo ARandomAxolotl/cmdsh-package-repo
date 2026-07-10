@@ -1,0 +1,4 @@
+packages-dev/*.tmp
+packages-dev/*.tmp.*
+packages-dev/*.lck
+packages-dev/*-ed2.conf
