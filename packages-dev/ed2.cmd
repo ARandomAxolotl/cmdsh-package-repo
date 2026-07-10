@@ -63,7 +63,7 @@ if "%i%"=="hd" set help=1 && goto :helpdel
 if "%i%"=="hr" set help=1 && goto :helpread
 :: help!
 set help=0
-if "errlv"=="1" echo Unknown command: '%i%'. Type 'h' for help.
+if "%errlv%"=="1" echo Unknown command: '%i%'. Type 'h' for help.
 
 goto :loop
 
@@ -117,7 +117,7 @@ echo ?
 goto :lckfileloop
 
 :recoverlckfile
-for /f "delims=" %%A in ("%lckfile%") do (
+for /f "delims=" %%A in ('type "%lckfile%"') do (
     set "sessionid=%%A"
     goto :prepare
 )
