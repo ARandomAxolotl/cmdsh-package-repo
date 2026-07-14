@@ -5,6 +5,20 @@ if "%~1" == "" (
 	exit /b
 )
 
+chcp 65001>nul 2>&1
+
+if not exist "%appdata%\ed2" mkdir "%appdata%\ed2"
+
+if not exist "%appdata%\ed2\config-exit.cmd" (
+  (
+    echo rem This is the "exit" configuration file for ed2 that will run every 'q'.
+    echo rem This will run before the .tmp and .lck files cleanup
+    echo rem Caution : This config is a batchfile so it can execute code.
+  ) >> "%appdata%\ed2\config-exit.cmd"
+)
+
+
+
 set "outputfile=%~1"
 set "sessionid=%RANDOM%%RANDOM%"
 set "sessionconf=%sessionid%-ed2.conf"
@@ -27,6 +41,26 @@ if exist "%outputfile%" (
   type nul>"%tmpfile%"
 )
 
+if exist "%appdata%\ed2\config.cmd" (
+  call "%appdata%\ed2\config.cmd"
+) else (
+  (
+    echo rem This is the configuration file for ed2.
+    echo rem This will run after sessionid is created and before the edit prompt.
+    echo rem Caution : This config is a batchfile so it can execute code.
+  ) >> "%appdata%\ed2\config.cmd"
+)
+
+if not exist "%appdata%\ed2\config-post.cmd" (
+  (
+    echo rem This is the configuration file for ed2.
+    echo rem This will run after commands and will NOT run in append and insert mode
+    echo rem Make sure to add `set "errlv=0"` after your commands.
+    echo rem Caution : This config is a batchfile so it can execute code.
+  ) >> "%appdata%\ed2\config-post.cmd"
+)
+
+
 :loop
 set "errlv=1"
 set "i="
@@ -34,15 +68,17 @@ set /p "i=(%outputfile%): "
 
 if "%i%"=="a" goto :append
 if "%i%"=="i" goto :insert
+if "%i%"=="r" goto :replace
 :: append
 if "%i%"=="w" goto :write
 :: write, yes
 if "%i%"=="e" goto :openmorefile
 if "%i%"=="q" goto :exit
 :: quit
-if "%i%"=="rf" goto :readfile
+if "%i%"=="tf" goto :readfile
 :: read existfile
-if "%i%"=="rt" goto :readtmpbuffer
+if "%i%"=="tt" goto :readtmpbuffer
+if "%i%"=="tb" goto :readtmpbuffer
 :: read tmpbuffer
 
 if "%i%"=="ct" type nul>"%tmpfile%" & set errlv=0
@@ -63,6 +99,12 @@ if "%i%"=="hd" set help=1 && goto :helpdel
 if "%i%"=="hr" set help=1 && goto :helpread
 :: help!
 set help=0
+
+::setup cfg
+set "command=%i%"
+call "%appdata%\ed2\config-post.cmd"
+
+:: config 
 if "%errlv%"=="1" echo Unknown command: '%i%'. Type 'h' for help.
 
 goto :loop
@@ -98,6 +140,7 @@ type "%tmpfile%"
 goto :loop
 
 :exit
+call "%appdata%\ed2\config-exit.cmd"
 call :cleanup "%sessionconf%" "%sessionid%"
 del "%sessionconf%"
 exit /b
@@ -138,7 +181,7 @@ set /a n=%~1+1
 set conf=%~2
 set /a i=0
 
-for /f "delims=" %%A in ("%conf%") do (
+for /f "delims=" %%A in ('type "%conf%"'') do (
   set /a i+=1
   if !i! equ %n% (
     set "line=%%A"
@@ -168,6 +211,7 @@ exit /b
 echo Edit commands : 
 echo 'a'  : append text
 echo 'i'  : insert text
+echo 'r'  : replace text
 echo.
 echo Exit :
 echo 'q'  : quit, discarding any changes
@@ -184,12 +228,13 @@ echo 'hf' : file commands help
 echo.
 echo Alias :
 echo 'e'  = 'fo'
+echo 'tt' = 'tb'
 echo.
 if "%help%"=="1" goto :loop
 :helpread
 echo Read commands :
-echo 'rt' : read write buffer
-echo 'rf' : read file from disk
+echo 'tb' : read write buffer
+echo 'tf' : read file from disk
 echo.
 if "%help%"=="1" goto :loop
 :helpdel
@@ -245,6 +290,7 @@ exit /b
 
 :doinsert
 setlocal EnableDelayedExpansion && set "inserttmpbuffer=%inserttmpbuffer%" && set "crrinsertline=%insertline%"
+:acualinsert
 set "i="
 set /p "i=(inserting %outputfile% at line %crrinsertline%): "
 set /a crrinsertline+=1
@@ -255,9 +301,71 @@ if "!i:~0,1!"=="." (
 (
   echo(!i!
 )>>"%inserttmpbuffer%"
-goto :doinsert
+goto :acualinsert
 
 :cleaninsert
+setlocal EnableDelayedExpansion
+
+set "source=%~2"
+set "target=%~2.2"
+set "limit=%~1"
+
+(
+  set /a count=0
+  for /f "delims=" %%A in ('type "%source%"') do (
+    set /a count+=1
+    if !count! GEQ %limit% (
+      >>"%target%" echo(%%A
+    )
+  )
+)
+endlocal
+exit /b
+
+:replace
+set "i="
+set /p "i=Line :"
+if "%i%"=="" ( 
+  echo Input a line. 
+  goto :loop
+)
+set "replaceline=%i%"
+call :replaceprepare "%replaceline%" "%tmpfile%"
+call :doreplace
+call :cleanreplace "%replaceline%" "%tmpfile%"
+type "%replacetmpbuffer%">"%tmpfile%"
+del "%replacetmpbuffer%"
+goto :loop
+
+:replaceprepare
+setlocal EnableDelayedExpansion
+
+set "source=%~2"
+set "target=%~2.2"
+set "limit=%~1"
+
+(
+    set /a count=0
+    for /f "delims=" %%A in ('type "%source%"') do (
+        set /a count+=1
+        if !count! LSS %limit% echo %%A
+    )
+) > "%target%"
+
+endlocal && set "replacetmpbuffer=%target%"
+exit /b
+
+:doreplace
+setlocal EnableDelayedExpansion
+set "i="
+set /p "i=(replacing line %replaceline% of %outputfile%): "
+(
+  echo(!i!
+)>>"%replacetmpbuffer%"
+endlocal
+exit /b
+
+:cleanreplace
 setlocal EnableDelayedExpansion
 
 set "source=%~2"
@@ -274,4 +382,4 @@ set "limit=%~1"
   )
 )
 endlocal
-exit /b
+

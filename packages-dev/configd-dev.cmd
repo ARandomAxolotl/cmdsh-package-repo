@@ -6,6 +6,6 @@ for /f "usebackq tokens=1,* delims== eol=#" %%A in ("%~1") do (
         for /f "tokens=* delims= " %%V in ("!val!") do set "val=%%V"
     )
     if defined key (
-        set "config_!key!=!val!"
+        set "%~2_!key!=!val!"
     )
 )
