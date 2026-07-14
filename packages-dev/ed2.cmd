@@ -14,6 +14,9 @@ if not exist "%appdata%\ed2\config-exit.cmd" (
     echo rem This is the "exit" configuration file for ed2 that will run every 'q'.
     echo rem This will run before the .tmp and .lck files cleanup
     echo rem Caution : This config is a batchfile so it can execute code.
+    echo rem You might need this :
+    echo prompt
+    echo color 07
   ) >> "%appdata%\ed2\config-exit.cmd"
 )
 
@@ -48,7 +51,9 @@ if exist "%appdata%\ed2\config.cmd" (
     echo rem This is the configuration file for ed2.
     echo rem This will run after sessionid is created and before the edit prompt.
     echo rem Caution : This config is a batchfile so it can execute code.
+    echo set "ed2_prompt=(%%outputfile%%): "
   ) >> "%appdata%\ed2\config.cmd"
+  call "%appdata%\ed2\config.cmd"
 )
 
 if not exist "%appdata%\ed2\config-post.cmd" (
@@ -64,7 +69,7 @@ if not exist "%appdata%\ed2\config-post.cmd" (
 :loop
 set "errlv=1"
 set "i="
-set /p "i=(%outputfile%): "
+call set /p "i=%ed2_prompt%"
 
 if "%i%"=="a" goto :append
 if "%i%"=="i" goto :insert
@@ -98,13 +103,17 @@ if "%i%"=="ha" goto :help
 if "%i%"=="hf" set help=1 && goto :helpfile
 if "%i%"=="hd" set help=1 && goto :helpdel
 if "%i%"=="hr" set help=1 && goto :helpread
+if "%i%"=="hc" set help=1 && goto helpcfg
 :: help!
 set help=0
 
-::setup cfg
+if "%i%"=="reload" (
+  call "%appdata%\ed2\config.cmd"
+  set "errlv=0"
+)
+
 set "command=%i%"
 call "%appdata%\ed2\config-post.cmd"
-
 :: config 
 if "%errlv%"=="1" echo Unknown command: '%i%'. Type 'h' for help.
 
@@ -210,46 +219,51 @@ exit /b
 :help
 :helpcommon
 echo Edit commands : 
-echo 'a'  : append text
-echo 'i'  : insert text
-echo 'r'  : replace text
-echo 'd'  : delete range
+echo 'a'      : append text
+echo 'i'      : insert text
+echo 'r'      : replace text
+echo 'd'      : delete range
 echo.
 echo Exit :
-echo 'q'  : quit, discarding any changes
+echo 'q'      : quit, discarding any changes
 echo.
 echo Write :
-echo 'w'  : write buffer to disk
+echo 'w'      : write buffer to disk
 echo.
 echo Help :
-echo 'h'  : general help
-echo 'ha' : show all help
-echo 'hr' : read commands help
-echo 'hd' : delete/clear commands help
-echo 'hf' : file commands help
+echo 'h'      : general help
+echo 'ha'     : show all help
+echo 'hr'     : read commands help
+echo 'hd'     : delete/clear commands help
+echo 'hf'     : file commands help
 echo.
 echo Alias :
-echo 'e'  = 'fo'
-echo 'tt' = 'tb'
+echo 'e'      = 'fo'
+echo 'tt'     = 'tb'
 echo.
 if "%help%"=="1" goto :loop
 :helpread
 echo Read commands :
-echo 'tb' : read write buffer
-echo 'tf' : read file from disk
+echo 'tb'     : read write buffer
+echo 'tf'     : read file from disk
 echo.
 if "%help%"=="1" goto :loop
 :helpdel
 echo Clear/Delete commands : 
-echo 'ct' : clear write buffer
-echo 'cf' : clear file on disk(caution!)
+echo 'ct'     : clear write buffer
+echo 'cf'     : clear file on disk(caution!)
 echo.
 if "%help%"=="1" goto :loop
 :helpfile
 echo Files command :
-echo 'fo' : open/create a file
-echo 'fc' : cycle through open files
-echo 'fl' : list open files.
+echo 'fo'     : open/create a file
+echo 'fc'     : cycle through open files
+echo 'fl'     : list open files.
+echo.
+if "%help%"=="1" goto :loop
+:helpcfg
+echo Configuration commands :
+echo 'reload' : reload config.cmd
 goto :loop
 
 :insert
