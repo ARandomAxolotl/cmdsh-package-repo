@@ -34,7 +34,7 @@ set "lckfile=%outputfile%.lck"
 if exist "%lckfile%" goto :existlckfile
 
 :prepare
-set "tmpfile=%sessionid%_%outputfile%.tmp"
+set "tmpfile=%outputfile%_%sessionid%.tmp"
 echo %sessionid%>"%lckfile%"
 
 if not exist "%sessionconf%" echo %outputfile%>"%sessionconf%"
@@ -211,7 +211,7 @@ for /f "delims=" %%A in (%~1) do (
   set "content=%%A"
 
   del "!content!.lck"
-  del "%~2_!content!.tmp"
+  del "!content!_%~2.tmp"
 )
 endlocal
 exit /b
