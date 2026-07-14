@@ -69,6 +69,7 @@ set /p "i=(%outputfile%): "
 if "%i%"=="a" goto :append
 if "%i%"=="i" goto :insert
 if "%i%"=="r" goto :replace
+if "%i%"=="d" goto :delete
 :: append
 if "%i%"=="w" goto :write
 :: write, yes
@@ -212,6 +213,7 @@ echo Edit commands :
 echo 'a'  : append text
 echo 'i'  : insert text
 echo 'r'  : replace text
+echo 'd'  : delete range
 echo.
 echo Exit :
 echo 'q'  : quit, discarding any changes
@@ -258,7 +260,7 @@ if "%i%"=="" (
   goto :loop
 )
 set "insertline=%i%"
-call :insertprepare "%insertline%" "%tmpfile%"
+call :insertprepare "%insertline%" "%tmpfile%" "inserttmpbuffer"
 goto :doinsert
 :finishinsert
 call :cleaninsert "%insertline%" "%tmpfile%"
@@ -285,7 +287,7 @@ set "limit=%~1"
     )
 ) > "%target%"
 
-endlocal && set "inserttmpbuffer=%target%"
+endlocal && set "%~3=%target%"
 exit /b
 
 :doinsert
@@ -330,30 +332,12 @@ if "%i%"=="" (
   goto :loop
 )
 set "replaceline=%i%"
-call :replaceprepare "%replaceline%" "%tmpfile%"
+call :insertprepare "%replaceline%" "%tmpfile%" "replacetmpbuffer"
 call :doreplace
 call :cleanreplace "%replaceline%" "%tmpfile%"
 type "%replacetmpbuffer%">"%tmpfile%"
 del "%replacetmpbuffer%"
 goto :loop
-
-:replaceprepare
-setlocal EnableDelayedExpansion
-
-set "source=%~2"
-set "target=%~2.2"
-set "limit=%~1"
-
-(
-    set /a count=0
-    for /f "delims=" %%A in ('type "%source%"') do (
-        set /a count+=1
-        if !count! LSS %limit% echo %%A
-    )
-) > "%target%"
-
-endlocal && set "replacetmpbuffer=%target%"
-exit /b
 
 :doreplace
 setlocal EnableDelayedExpansion
@@ -382,4 +366,34 @@ set "limit=%~1"
   )
 )
 endlocal
+exit /b
 
+:delete
+set "i="
+set /p "i=Delete from line :"
+if "%i%"=="" ( 
+  echo Input a line. 
+  goto :loop
+)
+set "deletestartline=%i%"
+set "i="
+set /p "i=Delete to line(leave blank for a single line): "
+
+if "%i%"=="" ( 
+  set "deletetoline=%deletestartline%"
+) else (
+  set "deletetoline=%i%"
+)
+
+if "%deletestartline%" GTR "%deletetoline%" (
+  echo Warning : Deleting from line %deletetoline% to %deletestartline%.
+  set "i=%deletetoline%"
+  set "deletetoline=%deletestartline%"
+  set "deletestartline=%i%"
+)
+
+call :insertprepare "%deletestartline%" "%tmpfile%" "deletetmpbuffer"
+call :cleanreplace "%deletetoline%" "%tmpfile%"
+type "%deletetmpbuffer%">"%tmpfile%"
+del "%deletetmpbuffer%"
+goto :loop
