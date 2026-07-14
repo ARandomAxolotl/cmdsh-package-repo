@@ -31,7 +31,7 @@ set /a filecount=1
 :lckfileprepare
 set "lckfile=%outputfile%.lck"
 
-if exist %lckfile% goto :existlckfile
+if exist "%lckfile%" goto :existlckfile
 
 :prepare
 set "tmpfile=%sessionid%_%outputfile%.tmp"
@@ -191,7 +191,7 @@ set /a n=%~1+1
 set conf=%~2
 set /a i=0
 
-for /f "delims=" %%A in ('type "%conf%"'') do (
+for /f "delims=" %%A in ('type "%conf%"') do (
   set /a i+=1
   if !i! equ %n% (
     set "line=%%A"
