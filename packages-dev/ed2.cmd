@@ -51,7 +51,7 @@ if exist "%appdata%\ed2\config.cmd" (
     echo rem This is the configuration file for ed2.
     echo rem This will run after sessionid is created and before the edit prompt.
     echo rem Caution : This config is a batchfile so it can execute code.
-    echo set "ed2_prompt=(%%outputfile%%): "
+    echo set "ed2_prompt=(%%ed2_mode%% %%outputfile%%:%%currentline%%): "
   ) >> "%appdata%\ed2\config.cmd"
   call "%appdata%\ed2\config.cmd"
 )
@@ -69,6 +69,8 @@ if not exist "%appdata%\ed2\config-post.cmd" (
 :loop
 set "errlv=1"
 set "i="
+set "currentline="
+set "mode=normal"
 call set /p "i=%ed2_prompt%"
 
 if "%i%"=="a" goto :append
@@ -122,7 +124,9 @@ goto :loop
 :append
 setlocal EnableDelayedExpansion 
 set "i="
-set /p "i=(appending %outputfile%): "
+set "currentline="
+set "mode=append"
+call set /p "i=%ed2_prompt%"
 if "!i:~0,1!"=="." (
   endlocal
   goto :loop
@@ -308,7 +312,9 @@ exit /b
 setlocal EnableDelayedExpansion && set "inserttmpbuffer=%inserttmpbuffer%" && set "crrinsertline=%insertline%"
 :acualinsert
 set "i="
-set /p "i=(inserting %outputfile% at line %crrinsertline%): "
+set "currentline=%crrinsertline%"
+set "mode=insert"
+call set /p "i=%ed2_prompt%"
 set /a crrinsertline+=1
 if "!i:~0,1!"=="." (
   endlocal
@@ -356,7 +362,9 @@ goto :loop
 :doreplace
 setlocal EnableDelayedExpansion
 set "i="
-set /p "i=(replacing line %replaceline% of %outputfile%): "
+set "currentline=%replaceline%"
+set "mode=replace"
+call set /p "i=%ed2_prompt%"
 (
   echo(!i!
 )>>"%replacetmpbuffer%"
