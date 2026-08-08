@@ -14,6 +14,9 @@ if not exist "%appdata%\ed2\config-exit.cmd" (
     echo rem This is the "exit" configuration file for ed2 that will run every 'q'.
     echo rem This will run before the .tmp and .lck files cleanup
     echo rem Caution : This config is a batchfile so it can execute code.
+    echo rem You might need this :
+    echo prompt
+    echo color 07
   ) >> "%appdata%\ed2\config-exit.cmd"
 )
 
@@ -28,10 +31,10 @@ set /a filecount=1
 :lckfileprepare
 set "lckfile=%outputfile%.lck"
 
-if exist %lckfile% goto :existlckfile
+if exist "%lckfile%" goto :existlckfile
 
 :prepare
-set "tmpfile=%sessionid%_%outputfile%.tmp"
+set "tmpfile=%outputfile%_%sessionid%.tmp"
 echo %sessionid%>"%lckfile%"
 
 if not exist "%sessionconf%" echo %outputfile%>"%sessionconf%"
@@ -48,7 +51,9 @@ if exist "%appdata%\ed2\config.cmd" (
     echo rem This is the configuration file for ed2.
     echo rem This will run after sessionid is created and before the edit prompt.
     echo rem Caution : This config is a batchfile so it can execute code.
+    echo set "ed2_prompt=(%%ed2_mode%% %%outputfile%%:%%currentline%%): "
   ) >> "%appdata%\ed2\config.cmd"
+  call "%appdata%\ed2\config.cmd"
 )
 
 if not exist "%appdata%\ed2\config-post.cmd" (
@@ -64,11 +69,14 @@ if not exist "%appdata%\ed2\config-post.cmd" (
 :loop
 set "errlv=1"
 set "i="
-set /p "i=(%outputfile%): "
+set "currentline="
+set "mode=normal"
+call set /p "i=%ed2_prompt%"
 
 if "%i%"=="a" goto :append
 if "%i%"=="i" goto :insert
 if "%i%"=="r" goto :replace
+if "%i%"=="d" goto :delete
 :: append
 if "%i%"=="w" goto :write
 :: write, yes
@@ -97,13 +105,17 @@ if "%i%"=="ha" goto :help
 if "%i%"=="hf" set help=1 && goto :helpfile
 if "%i%"=="hd" set help=1 && goto :helpdel
 if "%i%"=="hr" set help=1 && goto :helpread
+if "%i%"=="hc" set help=1 && goto helpcfg
 :: help!
 set help=0
 
-::setup cfg
+if "%i%"=="reload" (
+  call "%appdata%\ed2\config.cmd"
+  set "errlv=0"
+)
+
 set "command=%i%"
 call "%appdata%\ed2\config-post.cmd"
-
 :: config 
 if "%errlv%"=="1" echo Unknown command: '%i%'. Type 'h' for help.
 
@@ -112,7 +124,9 @@ goto :loop
 :append
 setlocal EnableDelayedExpansion 
 set "i="
-set /p "i=(appending %outputfile%): "
+set "currentline="
+set "mode=append"
+call set /p "i=%ed2_prompt%"
 if "!i:~0,1!"=="." (
   endlocal
   goto :loop
@@ -181,7 +195,7 @@ set /a n=%~1+1
 set conf=%~2
 set /a i=0
 
-for /f "delims=" %%A in ('type "%conf%"'') do (
+for /f "delims=" %%A in ('type "%conf%"') do (
   set /a i+=1
   if !i! equ %n% (
     set "line=%%A"
@@ -201,7 +215,7 @@ for /f "delims=" %%A in (%~1) do (
   set "content=%%A"
 
   del "!content!.lck"
-  del "%~2_!content!.tmp"
+  del "!content!_%~2.tmp"
 )
 endlocal
 exit /b
@@ -209,45 +223,51 @@ exit /b
 :help
 :helpcommon
 echo Edit commands : 
-echo 'a'  : append text
-echo 'i'  : insert text
-echo 'r'  : replace text
+echo 'a'      : append text
+echo 'i'      : insert text
+echo 'r'      : replace text
+echo 'd'      : delete range
 echo.
 echo Exit :
-echo 'q'  : quit, discarding any changes
+echo 'q'      : quit, discarding any changes
 echo.
 echo Write :
-echo 'w'  : write buffer to disk
+echo 'w'      : write buffer to disk
 echo.
 echo Help :
-echo 'h'  : general help
-echo 'ha' : show all help
-echo 'hr' : read commands help
-echo 'hd' : delete/clear commands help
-echo 'hf' : file commands help
+echo 'h'      : general help
+echo 'ha'     : show all help
+echo 'hr'     : read commands help
+echo 'hd'     : delete/clear commands help
+echo 'hf'     : file commands help
 echo.
 echo Alias :
-echo 'e'  = 'fo'
-echo 'tt' = 'tb'
+echo 'e'      = 'fo'
+echo 'tt'     = 'tb'
 echo.
 if "%help%"=="1" goto :loop
 :helpread
 echo Read commands :
-echo 'tb' : read write buffer
-echo 'tf' : read file from disk
+echo 'tb'     : read write buffer
+echo 'tf'     : read file from disk
 echo.
 if "%help%"=="1" goto :loop
 :helpdel
 echo Clear/Delete commands : 
-echo 'ct' : clear write buffer
-echo 'cf' : clear file on disk(caution!)
+echo 'ct'     : clear write buffer
+echo 'cf'     : clear file on disk(caution!)
 echo.
 if "%help%"=="1" goto :loop
 :helpfile
 echo Files command :
-echo 'fo' : open/create a file
-echo 'fc' : cycle through open files
-echo 'fl' : list open files.
+echo 'fo'     : open/create a file
+echo 'fc'     : cycle through open files
+echo 'fl'     : list open files.
+echo.
+if "%help%"=="1" goto :loop
+:helpcfg
+echo Configuration commands :
+echo 'reload' : reload config.cmd
 goto :loop
 
 :insert
@@ -258,7 +278,7 @@ if "%i%"=="" (
   goto :loop
 )
 set "insertline=%i%"
-call :insertprepare "%insertline%" "%tmpfile%"
+call :insertprepare "%insertline%" "%tmpfile%" "inserttmpbuffer"
 goto :doinsert
 :finishinsert
 call :cleaninsert "%insertline%" "%tmpfile%"
@@ -285,14 +305,16 @@ set "limit=%~1"
     )
 ) > "%target%"
 
-endlocal && set "inserttmpbuffer=%target%"
+endlocal && set "%~3=%target%"
 exit /b
 
 :doinsert
 setlocal EnableDelayedExpansion && set "inserttmpbuffer=%inserttmpbuffer%" && set "crrinsertline=%insertline%"
 :acualinsert
 set "i="
-set /p "i=(inserting %outputfile% at line %crrinsertline%): "
+set "currentline=%crrinsertline%"
+set "mode=insert"
+call set /p "i=%ed2_prompt%"
 set /a crrinsertline+=1
 if "!i:~0,1!"=="." (
   endlocal
@@ -330,35 +352,19 @@ if "%i%"=="" (
   goto :loop
 )
 set "replaceline=%i%"
-call :replaceprepare "%replaceline%" "%tmpfile%"
+call :insertprepare "%replaceline%" "%tmpfile%" "replacetmpbuffer"
 call :doreplace
 call :cleanreplace "%replaceline%" "%tmpfile%"
 type "%replacetmpbuffer%">"%tmpfile%"
 del "%replacetmpbuffer%"
 goto :loop
 
-:replaceprepare
-setlocal EnableDelayedExpansion
-
-set "source=%~2"
-set "target=%~2.2"
-set "limit=%~1"
-
-(
-    set /a count=0
-    for /f "delims=" %%A in ('type "%source%"') do (
-        set /a count+=1
-        if !count! LSS %limit% echo %%A
-    )
-) > "%target%"
-
-endlocal && set "replacetmpbuffer=%target%"
-exit /b
-
 :doreplace
 setlocal EnableDelayedExpansion
 set "i="
-set /p "i=(replacing line %replaceline% of %outputfile%): "
+set "currentline=%replaceline%"
+set "mode=replace"
+call set /p "i=%ed2_prompt%"
 (
   echo(!i!
 )>>"%replacetmpbuffer%"
@@ -382,4 +388,34 @@ set "limit=%~1"
   )
 )
 endlocal
+exit /b
 
+:delete
+set "i="
+set /p "i=Delete from line :"
+if "%i%"=="" ( 
+  echo Input a line. 
+  goto :loop
+)
+set "deletestartline=%i%"
+set "i="
+set /p "i=Delete to line(leave blank for a single line): "
+
+if "%i%"=="" ( 
+  set "deletetoline=%deletestartline%"
+) else (
+  set "deletetoline=%i%"
+)
+
+if "%deletestartline%" GTR "%deletetoline%" (
+  echo Warning : Deleting from line %deletetoline% to %deletestartline%.
+  set "i=%deletetoline%"
+  set "deletetoline=%deletestartline%"
+  set "deletestartline=%i%"
+)
+
+call :insertprepare "%deletestartline%" "%tmpfile%" "deletetmpbuffer"
+call :cleanreplace "%deletetoline%" "%tmpfile%"
+type "%deletetmpbuffer%">"%tmpfile%"
+del "%deletetmpbuffer%"
+goto :loop
