@@ -11,3 +11,7 @@ package-3 : configd-dev
 description : configuratorrrrrrrrrrrrrrrrrrrrrrr
 dependencies : none
 version : 1
+package-4 : batch++
+description : batch..but plus plus
+dependencies : none
+version : 1

@@ -54,3 +54,8 @@ version : 1
 package-14 : ed
 description : text editor
 dependencies : cat>=1
+version : 1 
+package-15 : batch++
+description : batch plus plus compiler + interpreter
+dependencies : none
+version : 1
