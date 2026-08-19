@@ -42,7 +42,10 @@ if "!i:~0,2!" == "*/" (
 if "!i:~0,2!" == "//" exit /b
 if "%comments%" == "1" exit /b
 if %mode% == 1 (
-  >> "%out%" echo(!i!
+  (
+    echo(!i!
+  )>>"%out%"
+// ensure that this works !i!
   exit /b
 ) else (
   !i!
